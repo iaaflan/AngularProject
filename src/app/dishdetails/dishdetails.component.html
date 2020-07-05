@@ -1,0 +1,88 @@
+<div class="container" fxLayout="row wrap" fxLayout.sm="column" fxLayout.xs="column"
+  fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+
+  <div fxFlex="40" *ngIf="dish">
+    <!-- <p>Display the details of the Dish here</p> -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title><strong>
+            <h3>{{dish.name | uppercase}}</h3>
+          </strong></mat-card-title>
+        <!-- <mat-card-subtitle>{{}}</mat-card-subtitle> -->
+      </mat-card-header>
+      <mat-card-content>
+        <img width="100%" src={{dish.image}} alt={{dish.name}}>
+        <p>{{dish.description}}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="goBack()">Go Back</button>
+        <span class="flex-spacer"></span>
+        <button mat-button [routerLink]="['/dishdetail', prev]"><span class="fa fa-chevron-left fa-lg"></span></button>
+        <button mat-button [routerLink]="['/dishdetail', next]"><span class="fa fa-chevron-right fa-lg"></span></button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  <div [hidden]="dish">
+    <mat-spinner></mat-spinner>
+    <h4>Loading . . . Please Wait</h4>
+  </div>
+
+  <div fxFlex="40">
+    <!-- <p>Display the list of comments here</p> -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <h1>Comments</h1>
+        </mat-card-title>
+      </mat-card-header>
+      <div *ngIf="dish.comments">
+        <mat-card-content *ngFor="let cmt of dish.comments">
+          <p>{{cmt.comment}}</p>
+          <p>{{cmt.rating}} Stars</p>
+          <p> -- {{cmt.author}} {{cmt.date | date}}</p>
+        </mat-card-content>
+
+
+        <div [hidden]="feedbackForm.invalid">
+          <mat-card-content>
+            <p>{{feedbackForm.get('message').value}}</p>
+            <p>{{feedbackForm.get('star').value}} Stars</p>
+            <p> -- {{feedbackForm.get('name').value}} </p>
+          </mat-card-content>
+        </div>
+        <!-- <mat-card-actions>
+        <button mat-button>Ok</button>
+      </mat-card-actions> -->
+      </div>
+
+      <h3>Your Review</h3>
+      <p>{{feedbackForm.value|json}}</p>
+      <form novalidate [formGroup]="feedbackForm" #feedbackform="ngForm" (ngSubmit)="onSubmit()">
+
+        <p>
+          <mat-form-field class="half-width">
+            <input matInput formControlName="name" placeholder="Your Name" type="text" required>
+            <mat-error *ngIf="formErrors.name">{{formErrors.name}}</mat-error>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-slider thumbLabel [displayWith]="formatLabel" formControlName="star" value="5" tickInterval="1" min="1"
+            max="5">
+          </mat-slider>
+        </p>
+        <p>
+          <mat-form-field class="full-width">
+            <textarea matInput formControlName="message" placeholder="Your comment" name="message" id="message" rows="8"
+              required></textarea>
+            <mat-error *ngIf="formErrors.message">{{formErrors.message}}</mat-error>
+          </mat-form-field>
+        </p>
+        <button [disabled]="feedbackForm.invalid" type="submit" mat-button class="background-primary"
+          style="color: aliceblue;">Submit</button>
+      </form>
+    </mat-card>
+  </div>
+
+
+
+</div>
