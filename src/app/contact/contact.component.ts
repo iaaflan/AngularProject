@@ -1,16 +1,29 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validator, Validators } from '@angular/forms';
 import { Feedback, CONTACTTYPE } from '../shared/feedback';
+import { flyInOut, expand } from '../animations/app.animation';
 
+import { FeedbackService } from '../_services/feedback.service';
 @Component({
   selector: 'app-contact',
+  host: {
+    '[@flyInOut]': 'true',
+    style: 'display: block;',
+  },
+  animations: [flyInOut(), expand()],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
 })
 export class ContactComponent implements OnInit {
   feedbackForm: FormGroup;
   feedback: Feedback;
+  feedbacklist: Feedback[];
+  ferrMess: string;
   contactType = CONTACTTYPE;
+  errMess: string;
+  feedbackCopy: Feedback;
+  visibility = 'shown';
+
   @ViewChild('feedbackform') feedbackFormDirective;
 
   formErrors = {
@@ -41,11 +54,21 @@ export class ContactComponent implements OnInit {
     },
   };
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private feedbackService: FeedbackService,
+    @Inject('BaseURL') public BaseURL
+  ) {
     this.createForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.feedbackService.getFeedback().subscribe(
+      (feedbacklist) => (this.feedbacklist = feedbacklist),
+      (ferrMess) => (this.ferrMess = ferrMess)
+    );
+    this.feedbackCopy = this.feedback;
+  }
   createForm() {
     this.feedbackForm = this.formBuilder.group({
       firstname: [
@@ -101,7 +124,42 @@ export class ContactComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.feedback);
+    // firstname: '',
+    // lastname: '',
+    // telnum: '',
+    // email: '',
+    // agree: false,
+    // contacttype: 'None',
+    // message: '',
+    // console.log(this.feedback);
+    // const firstname: any = this.feedbackForm.get('firstname').value;
+    // const lastname: string = this.feedbackForm.get('lastname').value;
+    // const telnum: number = this.feedbackForm.get('telnum').value;
+    // const email: any = this.feedbackForm.get('email').value;
+    // const contacttype: string = this.feedbackForm.get('contacttype').value;
+    // const message: string = this.feedbackForm.get('message').value;
+
+    this.feedbackService.getFeedback().subscribe(
+      (feedbacklist) => (this.feedbacklist = feedbacklist),
+      (ferrMess) => (this.ferrMess = ferrMess)
+    );
+
+    this.feedback = this.feedbackForm.value;
+    this.feedbackCopy = this.feedback;
+
+    //console.log(this.feedbackCopy);
+    this.feedbackService.putFeedback(this.feedbackCopy).subscribe(
+      (feedback) => {
+        this.feedback = feedback;
+        this.feedbackCopy = feedback;
+      },
+      (errmess) => {
+        this.feedback = null;
+        this.feedbackCopy = null;
+        this.errMess = errmess as any;
+      }
+    );
+
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',

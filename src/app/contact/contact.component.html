@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <div fxFlex>
+  <div fxFlex [@expand]>
     <h3>Location Information</h3>
     <div fxLayout="column" fxLayout.gt-sm="row">
       <div fxFlex="50" fxFlexOffset="10px">
@@ -32,6 +32,24 @@
         <h4>Map of our Location</h4>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="feedbacklist">
+    <mat-card *ngFor="let feedbacklist of feedbacklist">
+      <mat-card-header>
+        <mat-card-title>{{feedbacklist.firstname}} + {{feedbacklist.lastname}}</mat-card-title>
+        <mat-card-subtitle>{{feedbacklist.telnum}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        {{feedbacklist.email}}
+        {{feedbacklist.contacttype}}
+        <br />
+        {{feedbacklist.message}}
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex [hidden]="feedbacklist">
+    <mat-spinner></mat-spinner>
   </div>
   <div fxFlex fxFlexOffset="20px" class="form-size">
     <h3>Send us your feedback</h3>
@@ -75,4 +93,13 @@
         style="color: aliceblue;">Submit</button>
     </form>
   </div>
+
+  <div fxFlex [hidden]="!feedbackCopy">
+    <h1>Success</h1>
+  </div>
+  <div fxFlex *ngIf="errMess">
+    <h2>Error</h2>
+    <h4>{{errMess}}</h4>
+  </div>
+
 </div>

@@ -29,12 +29,17 @@ import { ContactComponent } from './contact/contact.component';
 import { DishdetailsComponent } from './dishdetails/dishdetails.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { HttpClientModule } from '@angular/common/http';
 import { DishService } from './_services/dish.service';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { PromotionService } from './_services/promotion.service';
 import { LoginComponent } from './login/login.component';
 import { LeaderService } from './_services/leader.service';
+import { ProcessHTTPMsgService } from './_services/process-httpmsg.service';
+
+import { baseURL } from './shared/baseurl';
+import { HighlightDirective } from './directives/highlight.directive';
 
 @NgModule({
   declarations: [
@@ -47,6 +52,7 @@ import { LeaderService } from './_services/leader.service';
     HomeComponent,
     ContactComponent,
     LoginComponent,
+    HighlightDirective,
   ],
   imports: [
     AppRoutingModule,
@@ -69,9 +75,16 @@ import { LeaderService } from './_services/leader.service';
     MatProgressSpinnerModule,
     CommonModule,
     MatSliderModule,
+    HttpClientModule,
   ],
   entryComponents: [LoginComponent],
-  providers: [DishService, PromotionService, LeaderService],
+  providers: [
+    DishService,
+    PromotionService,
+    LeaderService,
+    ProcessHTTPMsgService,
+    { provide: 'BaseURL', useValue: baseURL },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
